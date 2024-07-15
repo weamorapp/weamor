@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>We Amor</title>
+	<style>
+body {
+ background-image: url('https://media.istockphoto.com/id/1217216795/photo/pink-millennial-cute-old-matte-grunge-faded-adobe-plaster-texture-high-key-abstract-cement.webp?b=1&s=170667a&w=0&k=20&c=6S6zzmnfIrCW8_bZKK6P_F2KFgv9Fo-raZk3zktjISU=');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: 100% 100%;
+}
+
+      .image-button {
+            width: 200px;
+            height: 80px;
+            cursor: pointer;
+        }
+       
+        #message {
+            margin-top: 20px;
+            font-size: 18px;
+            color: red;
+        }
+</style>
+</head>
+<body>
+
+<center><img src="logo.png" width = "300" height = "300" >
+<h2>STEP 1 : <h2>
+<h2>Join We Amor community channel on Telegram </h2>
+<h4></h4>
+<br>
+<img id="button1" class="image-button" src="join.png" alt="Button 1"><br>
+    <img id="button2" class="image-button" src="next.png" alt="Button 2">
+    <p id="message"></p>
+
+    <script>
+        const button1 = document.getElementById('button1');
+        const button2 = document.getElementById('button2');
+        const message = document.getElementById('message');
+        let button2Clicks = 0;
+
+        button1.addEventListener('click', () => {
+            // Open first webpage in a new tab
+            window.open('https://t.me/weamorapp', '_blank'); // Replace with your desired URL
+            
+        });
+
+        button2.addEventListener('click', () => {
+            button2Clicks++;
+            if (button2Clicks === 1) {
+                // Show error message on first click
+                message.innerText = "Error: Please Join Community and than click next";
+            } else if (button2Clicks >= 2) {
+                // Open second webpage in a new tab on second click
+                window.open('page3.html'); // Replace with your desired URL
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Button Click Example</title>
+    <style>
+        .image-button {
+            width: 200px;
+            height: 50px;
+            cursor: pointer;
+        }
+        #button2 {
+            display: none;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 18px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <img id="button1" class="image-button" src="join.png" alt="Button 1">
+    <img id="button2" class="image-button" src="next.png" alt="Button 2">
+    <p id="message"></p>
+
+    <script>
+        const button1 = document.getElementById('button1');
+        const button2 = document.getElementById('button2');
+        const message = document.getElementById('message');
+        let button2Clicks = 0;
+
+        button1.addEventListener('click', () => {
+            // Open first webpage in a new tab
+            window.open('https://www.example.com', '_blank'); // Replace with your desired URL
+            // Make the second button visible
+            button2.style.display = 'block';
+        });
+
+        button2.addEventListener('click', () => {
+            button2Clicks++;
+            if (button2Clicks === 1) {
+                // Show error message on first click
+                message.innerText = "Error: Please try again.";
+            } else if (button2Clicks === 2) {
+                // Open second webpage in a new tab on second click
+                window.open('https://www.anotherexample.com', '_blank'); // Replace with your desired URL
+            }
+        });
+    </script>
+</body>
+</html>

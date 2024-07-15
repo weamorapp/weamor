@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>We Amor</title>
+    <script type="text/javascript">
+        function redirectToStore() {
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            if (/android/i.test(userAgent)) {
+                // Redirect to Google Play Store
+                window.location.href = "https://play.google.com/store/apps/details?id=app.weamor";
+            } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                // Redirect to Apple App Store
+                window.location.href = "https://apps.apple.com/in/app/we-amor/id6469098495";
+            } else {
+                // Redirect to a default page or show a message
+                window.location.href = "https://play.google.com/store/apps/details?id=app.weamor";
+            }
+        }
+
+        window.onload = redirectToStore;
+    </script>
+</head>
+<body>
+    <h1>Redirecting...</h1>
+</body>
+</html>
