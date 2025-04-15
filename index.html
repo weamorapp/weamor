@@ -3,26 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>We Amor</title>
-	<style>
-body {
-  background-image: url('https://media.istockphoto.com/id/1217216795/photo/pink-millennial-cute-old-matte-grunge-faded-adobe-plaster-texture-high-key-abstract-cement.webp?b=1&s=170667a&w=0&k=20&c=6S6zzmnfIrCW8_bZKK6P_F2KFgv9Fo-raZk3zktjISU=');
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: 100% 100%;
-}
-</style>
+    <title>Claim Free Membership | We Amor</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #fdeff2; text-align: center; }
+        .container { 
+            max-width: 450px; 
+            margin: 50px auto; 
+            background: white; 
+            padding: 25px; 
+            border-radius: 10px; 
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+            position: relative;
+        }
+        .logo { width: 120px; margin-bottom: 15px; }
+        h2 { color: #d63384; font-size: 22px; margin-top: 5px; }
+        p { font-size: 16px; color: #333; }
+        form { margin-top: 15px; }
+        input, select, button { 
+            width: 100%; 
+            padding: 10px; 
+            margin: 8px 0; 
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+            font-size: 16px; 
+        }
+        select { appearance: none; }
+        button { 
+            background: #d63384; 
+            color: white; 
+            font-size: 18px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            border: none; 
+        }
+        button:hover { background: #b52d6e; }
+    </style>
+    <style>
+    #_waugbg {
+      display: none;
+    }
+  </style>
+
+  <script id="_waugbg" style="display: none;">
+    var _wau = _wau || []; 
+    _wau.push(["small", "b1suensgd5d5", "gbg"]); 
+  </script>
+
+  <script async src="//waust.at/s.js"></script>
 </head>
 <body>
-<br>
-<br>
-<center><img src="logo.png" width = "300" height = "300" >
-<h3>Join the Revolution with We Amor!</h3>
-We Amor is one of the fastest-growing dating apps on Web 2, and now, we’re excited to transition into Web 3! We invite the Web 3 community to be part of our journey. Join us today and claim 100,000 free $AMOR tokens!<br><br>
-<a href="page2.html"><img src ="claim.png" height="80" Width ="200"></a><br>
-	<br>
-	<br>
-<div hidden>	<script id="_wau4mo">var _wau = _wau || []; _wau.push(["small", "jvnctabfxg", "4mo"]);</script><script async src="//waust.at/s.js"></script></div>
-</center>
+
+    <div class="container">
+        <img src="logo.png" alt="We Amor Logo" class="logo">  <!-- ✅ Add Your Logo Here -->
+        <h2>🎉 1 Year FREE Premium Membership! 🎉</h2>
+        <p>We Amor is giving all Telegram users <b>1 year of free premium membership!</b> ❤️</p>
+        <p>🔥 <b>Offer valid till April 10 2025!</b> Fill out the form below to claim your free membership.</p>
+
+        <form id="userForm">
+            <input type="text" id="name" placeholder="Enter your name" required>
+            <input type="email" id="email" placeholder="Enter your email" required>
+            <select id="country" required>
+                <option value="">Select your country</option>
+            </select>
+            <button type="submit">Claim Free Membership</button>
+        </form>
+    </div>
+
+    <script type="module">
+        // ✅ Import Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+        import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-database.js";
+
+        // ✅ Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC7MFMwrs-0vr-YONifdXMilZ6GsVzmJ8M",
+            authDomain: "we-amor-marketing.firebaseapp.com",
+            databaseURL: "https://we-amor-marketing-default-rtdb.firebaseio.com",
+            projectId: "we-amor-marketing",
+            storageBucket: "we-amor-marketing.appspot.com",
+            messagingSenderId: "118887009581",
+            appId: "1:118887009581:web:b49970430ef0da498a57a4",
+            measurementId: "G-TH9B4XD1YF"
+        };
+
+        // ✅ Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // ✅ Form Submission Logic
+        document.getElementById("userForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            // Get form values
+            const name = document.getElementById("name").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const country = document.getElementById("country").value;
+
+            // Validation
+            if (!name || !email || !country) {
+                alert("All fields are required!");
+                return;
+            }
+
+            // ✅ Save to Firebase Database
+            const usersRef = ref(database, "users");
+            const newUserRef = push(usersRef);
+            set(newUserRef, { name, email, country })
+            .then(() => {
+                // ✅ Redirect with form data
+                window.location.href = `page2.html?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&country=${encodeURIComponent(country)}`;
+            })
+            .catch(error => {
+                alert("Error: " + error.message);
+            });
+        });
+
+        // ✅ Populate Country List with All Countries
+        const allCountries = [
+            "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria", 
+            "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan", 
+            "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde", "Cambodia", 
+            "Cameroon", "Canada", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo (Congo-Brazzaville)", "Costa Rica", 
+            "Croatia", "Cuba", "Cyprus", "Czechia (Czech Republic)", "Democratic Republic of the Congo", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", 
+            "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", "Ethiopia", "Fiji", "Finland", "France", 
+            "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", 
+            "Guyana", "Haiti", "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", 
+            "Israel", "Italy", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan", 
+            "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", 
+            "Malaysia", "Maldives", "Mali", "Malta", "Mexico", "Monaco", "Mongolia", "Morocco", "Myanmar", "Namibia", 
+            "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Nigeria", "Norway", "Pakistan", "Palestine", "Panama", "Peru", 
+            "Philippines", "Poland", "Portugal", "Qatar", "Romania", "Russia", "Rwanda", "Saudi Arabia", "Senegal", "Serbia", 
+            "Singapore", "South Africa", "South Korea", "Spain", "Sri Lanka", "Sweden", "Switzerland", "Thailand", "Turkey", "Ukraine", 
+            "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
+        ];
+
+        allCountries.forEach(country => {
+            $("#country").append(new Option(country, country));
+        });
+
+        // ✅ Enhance Dropdown UI
+        $("#country").select2({ placeholder: "Select your country", allowClear: true });
+    </script>
+
 </body>
-</html>
+</html> 
