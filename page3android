@@ -1,1 +1,130 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claim Your Free Membership | We Amor</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #fdeff2; text-align: center; }
+        .container { 
+            max-width: 450px; 
+            margin: 50px auto; 
+            background: white; 
+            padding: 25px; 
+            border-radius: 10px; 
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+        }
+        .logo { width: 120px; margin-bottom: 15px; }
+        h2 { color: #d63384; font-size: 22px; }
+        p { font-size: 16px; color: #333; margin-bottom: 15px; }
+        .email-box { 
+            font-size: 16px; 
+            color: #d63384; 
+            font-weight: bold; 
+            background: #f8d7da; 
+            padding: 8px; 
+            border-radius: 5px; 
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .highlight { color: #d63384; font-weight: bold; }
+        .final-step { 
+            margin-top: 15px; 
+            font-size: 18px; 
+            font-weight: bold; 
+            color: #28a745; 
+        }
+        .download-btn { 
+            display: block;
+            width: 80%;
+            margin: 20px auto;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background: #d63384;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .download-btn:hover { background: #c2186b; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <img src="logo.png" alt="We Amor Logo" class="logo">  <!-- ✅ Add Your Logo Here -->
+        <h2>🎉 Congratulations, <span id="userName"></span>! 🎉</h2>
+        <p>You’re just a step away from unlocking your <span class="highlight">1-year FREE premium membership</span> on We Amor! 💖</p>
+
+        <p>Follow these quick steps to claim your membership:</p>
+        <ol style="text-align: left; padding: 0 20px;">
+            <li>📲 <b>Download the We Amor App</b> using the button below.</li>
+            <li>✍️ <b>Sign up using this email:</b> <br> <span id="userEmail" class="email-box"></span></li>
+            <li>🛍️ On the checkout page, you will see the <span class="highlight">regular prices</span>—don't worry!</li>
+            <li>🎁 <b>Select "Yearly Membership" and proceed to checkout.</b></li>
+            <li>✅ On the final checkout page, your price will automatically change to <span class="highlight">$0.00</span>!</li>
+        </ol>
+
+        <p class="final-step">✔️ Complete the checkout and enjoy your <span class="highlight">1-year FREE premium membership</span>! 🎊</p>
+
+        <p>💡 <b>Important:</b> This offer is only for users who sign up with the same email used in this promo.</p>
+
+        <!-- ✅ Smart Download Button -->
+        <a id="downloadButton" class="download-btn">📥 Download We Amor</a>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("Page loaded, executing script...");
+
+            // ✅ Get User Data from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const name = urlParams.get("name") || "User";
+            const email = urlParams.get("email") || "";
+
+            // ✅ Display User's Name & Email
+            document.getElementById("userName").textContent = name;
+            document.getElementById("userEmail").textContent = email;
+
+            // ✅ Detect User's Device & Redirect to the Correct Store
+            function getAppStoreLink() {
+                const playStoreLink = "https://play.google.com/store/apps/details?id=app.weamor";
+                const appStoreLink = "https://apps.apple.com/in/app/we-amor/id6469098495";
+
+                if (/android/i.test(navigator.userAgent)) {
+                    return playStoreLink;
+                } else if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                    return appStoreLink;
+                }
+                return playStoreLink; // Default to Play Store for unknown devices
+            }
+
+            const downloadButton = document.getElementById("downloadButton");
+
+            // ✅ Ensure button exists before setting attributes
+            if (downloadButton) {
+                const appLink = getAppStoreLink();
+                console.log("Setting download button link to:", appLink);
+                downloadButton.setAttribute("href", appLink);
+
+                // ✅ Handle Button Click
+                downloadButton.addEventListener("click", function (event) {
+                    event.preventDefault(); // Prevent default behavior
+                    console.log("Download button clicked, redirecting to:", appLink);
+
+                    // ✅ Redirect to the correct store after a short delay
+                    setTimeout(() => {
+                        window.location.href = appLink;
+                    }, 200);
+                });
+            } else {
+                console.error("Download button not found!");
+            }
+        });
+    </script>
+
+</body>
+</html>
