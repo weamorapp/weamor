@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complete Your Free Membership 1| We Amor</title>
+    <title>Complete Your Free Membership | We Amor</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #fdeff2; text-align: center; overflow-y: auto !important; /* Force scrolling */ }
         .container { 
@@ -92,9 +92,23 @@ We Amor is giving 1 YEAR of FREE Premium! 🎉 Unlock exclusive features and tak
                 return;
             }
 
-            // ✅ Redirect to Page 3 with form data (Avoid Freeze with setTimeout)
+            // ✅ Redirect to Page 3 based on platform (Android or iOS)
+            const isAndroid = /android/i.test(navigator.userAgent);
+            const isIOS = /iphone|ipod|ipad/i.test(navigator.userAgent);
+
+            let redirectUrl = '';
+
+            if (isAndroid) {
+                redirectUrl = `page3android.html?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&country=${encodeURIComponent(country)}`;
+            } else if (isIOS) {
+                redirectUrl = `page3ios.html?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&country=${encodeURIComponent(country)}`;
+            } else {
+                redirectUrl = `page3.html?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&country=${encodeURIComponent(country)}`;
+            }
+
+            // ✅ Redirect with form data (Avoid Freeze with setTimeout)
             setTimeout(() => {
-                window.location.href = `page3.html?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&country=${encodeURIComponent(country)}`;
+                window.location.href = redirectUrl;
             }, 100);
         });
     </script>
