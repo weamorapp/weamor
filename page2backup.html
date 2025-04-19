@@ -1,0 +1,103 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Your Free Membership 1| We Amor</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #fdeff2; text-align: center; overflow-y: auto !important; /* Force scrolling */ }
+        .container { 
+            max-width: 450px; 
+            margin: 50px auto; 
+            background: white; 
+            padding: 25px; 
+            border-radius: 10px; 
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+            
+        }
+        .logo { width: 120px; margin-bottom: 15px; }
+        h2 { color: #d63384; font-size: 22px; }
+        p { font-size: 16px; color: #333; margin-bottom: 15px; }
+        button { 
+            background: #d63384; 
+            color: white; 
+            font-size: 16px; 
+            font-weight: bold; 
+            padding: 12px; 
+            width: 100%; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            margin: 10px 0;
+        }
+        button:hover { background: #b52d6e; }
+        .error { color: red; font-size: 14px; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <img src="logo.png" alt="We Amor Logo" class="logo">  <!-- ✅ Add Your Logo Here -->
+        <h2>🎉 Congratulations, <span id="userName"></span>! 🎉</h2>
+        <p>You are just one step away from getting your <b>1 year free premium membership!</b></p>
+        <p>Tell about this offer to <b>5 friends on Whatsapp</b> and get your free premium membership.</p>
+
+        <!-- ✅ Telegram Share Button -->
+        <button id="shareButton">📩 Share on Whatsapp</button>
+
+        <!-- ✅ Claim Membership Button -->
+        <button id="claimButton">🎁 Claim Membership</button>
+
+        <p class="error" id="errorMessage">⚠️ You must share this offer on Whatsapp before claiming!</p>
+    </div>
+
+    <script>
+        let hasShared = false;  // ✅ Track if the user has shared
+
+        // ✅ Get User Data from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const name = urlParams.get("name") || "User";
+        const email = urlParams.get("email") || "";
+        const country = urlParams.get("country") || "";
+
+        // ✅ Show User's Name
+        document.getElementById("userName").textContent = name;
+
+        // ✅ Telegram Share Button Logic
+        document.getElementById("shareButton").addEventListener("click", () => {
+            const message = `🚀 Exclusive Offer for Singles! 🚀
+
+We Amor is giving 1 YEAR of FREE Premium! 🎉 Unlock exclusive features and take your dating experience to the next level—absolutely free!
+
+🔥 Claim now: https://www.weamor.online
+⏳ Offer valid until April 24, 2025 – Don’t miss out!
+
+#WeAmor #FreePremium #LimitedTimeOffer`;
+
+            const telegramUrl = `whatsapp://send?text=${encodeURIComponent(message)}`;
+            
+            // ✅ Use "setTimeout" to avoid freeze issues in old browsers
+            setTimeout(() => {
+                window.open(telegramUrl, "_blank");
+            }, 100);
+
+            hasShared = true;  // ✅ Mark that the user has shared
+            document.getElementById("errorMessage").style.display = "none"; // ✅ Hide error message if it was shown
+        });
+
+        // ✅ Claim Membership Button Logic
+        document.getElementById("claimButton").addEventListener("click", () => {
+            if (!hasShared) {
+                document.getElementById("errorMessage").style.display = "block"; // ✅ Show error if not shared
+                return;
+            }
+
+            // ✅ Redirect to Page 3 with form data (Avoid Freeze with setTimeout)
+            setTimeout(() => {
+                window.location.href = `page3.html?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&country=${encodeURIComponent(country)}`;
+            }, 100);
+        });
+    </script>
+
+</body>
+</html>
