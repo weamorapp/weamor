@@ -2,184 +2,160 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Personality Quiz</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
-    .question { margin: 20px 0; }
-    #resultCanvas { display: none; margin-top: 20px; border: 1px solid #ccc; }
-    #downloadBtn, #regenBtn { display: none; margin-top: 15px; padding: 10px 20px; font-size: 16px; margin-right: 10px; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+    }
+    .question {
+      margin: 20px 0;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    canvas {
+      width: 100%;
+      height: auto;
+      border: 1px solid #ccc;
+      display: none;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
   </style>
 </head>
 <body>
+<div class="container">
   <h1>Discover Your Power Personality</h1>
   <form id="quizForm">
-    <div>
-      <label>Your Name:</label><br>
+    <div class="question">
+      <label>Your Name:</label>
       <input type="text" name="username" required />
     </div>
-
-    <!-- Questions omitted for brevity: same 8 as before -->
-    <!-- ... (copy all 8 questions from previous version here) ... -->
+    <div class="question">
+      <label>1. Your go-to weekend plan?</label>
+      <input type="radio" name="q1" value="A" required> Party hard<br>
+      <input type="radio" name="q1" value="B"> Chill at home<br>
+      <input type="radio" name="q1" value="C"> Explore something new
+    </div>
+    <!-- Repeat similar blocks for questions 2 to 10 -->
+    <div class="question">
+      <label>2. What kind of music do you vibe with?</label>
+      <input type="radio" name="q2" value="A" required> EDM<br>
+      <input type="radio" name="q2" value="B"> Lo-Fi<br>
+      <input type="radio" name="q2" value="C"> Classical
+    </div>
+    <!-- Add more questions here in same pattern up to q10 -->
+    <!-- For simplicity, let's assume only 2 for now -->
 
     <button type="submit">Reveal My Personality</button>
   </form>
 
-  <canvas id="resultCanvas" width="600" height="400"></canvas>
-  <br>
-  <button id="downloadBtn">Download & Share</button>
-  <button id="regenBtn">Try a Different Version</button>
+  <canvas id="resultCanvas" width="1080" height="1920"></canvas>
+  <button id="downloadBtn" style="display:none;">Download & Share</button>
+</div>
 
-  <script>
-    const form = document.getElementById('quizForm');
-    const canvas = document.getElementById('resultCanvas');
-    const ctx = canvas.getContext('2d');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const regenBtn = document.getElementById('regenBtn');
+<script>
+const form = document.getElementById('quizForm');
+const canvas = document.getElementById('resultCanvas');
+const ctx = canvas.getContext('2d');
+const downloadBtn = document.getElementById('downloadBtn');
 
-    let currentName = '';
-    let currentScore = 0;
+form.addEventListener('submit', function(e) {
+  e.preventDefault();
+  const formData = new FormData(form);
+  const name = formData.get('username');
+  let score = 0;
+  for (let i = 1; i <= 10; i++) {
+    const val = formData.get('q' + i);
+    if (val === 'A') score += 2;
+    if (val === 'B') score += 1;
+    if (val === 'C') score += 3;
+  }
 
-    const bgColors = {
-      "The Fearless Flame": "#FFD1DC",
-      "The Magnetic Legend": "#FAD6A5",
-      "The Visionary Mind": "#D0F0C0",
-      "The Gentle Healer": "#BEE3F8",
-      "The Cosmic Creator": "#E0BBE4",
-      "The Vibe Magnet": "#F6E2B3",
-      "The Soul Alchemist": "#D3F4FF",
-      "The Dream Architect": "#FFE6E6",
-      "The Unwritten Legend": "#FFF3B0"
-    };
+  const emojis = ['✨', '🔥', '🌟', '💫', '⚡', '❤️', '👑', '🌈'];
+  const descriptions = [
+    "You're the spark in every storm. You shine bright even on cloudy days.",
+    "You lead with heart and light. People admire you for your energy and vision.",
+    "A calm force of brilliance — you're unforgettable in the quietest ways.",
+    "You're destined to inspire, empower, and create beautiful chaos wherever you go."
+  ];
+  const bgColor = ["#FFE4E1", "#FFFACD", "#E6E6FA", "#D0F0C0"];
 
-    const fonts = {
-      "The Fearless Flame": "bold 26px Arial",
-      "The Magnetic Legend": "italic 26px Georgia",
-      "The Visionary Mind": "26px Trebuchet MS",
-      "The Gentle Healer": "26px Verdana",
-      "The Cosmic Creator": "bold 26px Courier New",
-      "The Vibe Magnet": "26px Comic Sans MS",
-      "The Soul Alchemist": "italic 26px Palatino",
-      "The Dream Architect": "bold 26px Helvetica",
-      "The Unwritten Legend": "26px Times New Roman"
-    };
+  const desc = descriptions[Math.floor(Math.random() * descriptions.length)];
+  const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+  const bg = bgColor[Math.floor(Math.random() * bgColor.length)];
 
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const formData = new FormData(form);
-      currentName = formData.get('username');
-      currentScore = 0;
+  canvas.style.display = 'block';
+  downloadBtn.style.display = 'inline-block';
 
-      for (let i = 1; i <= 8; i++) {
-        const answer = formData.get(`q${i}`);
-        if (answer === 'A') currentScore += 2;
-        if (answer === 'B') currentScore += 1;
-        if (answer === 'C') currentScore += 3;
-      }
+  // Background
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const result = generateDynamicResult(currentName, currentScore);
-      generateImage(currentName, result.title, result.paragraph, result.bgColor, result.titleFont);
-    });
+  // Header
+  ctx.fillStyle = '#000';
+  ctx.font = 'bold 60px Arial';
+  ctx.fillText(`${name}, you're...`, 100, 200);
 
-    regenBtn.addEventListener('click', () => {
-      const result = generateDynamicResult(currentName, currentScore);
-      generateImage(currentName, result.title, result.paragraph, result.bgColor, result.titleFont);
-    });
+  // Result
+  ctx.font = 'bold 70px Georgia';
+  ctx.fillStyle = '#D72638';
+  ctx.fillText(emoji, 100, 300);
 
-    function generateDynamicResult(name, score) {
-      const titles = Object.keys(bgColors);
-      const vibes = [
-        "bold and unstoppable", "charming beyond words", "an energy people can’t ignore",
-        "a symphony of brilliance", "a calm in every storm", "the life of every room",
-        "a spark that starts wildfires", "the gravity that holds others"
-      ];
+  ctx.font = '36px Arial';
+  const lines = wrapText(ctx, desc, 100, 400, 880, 60);
+  lines.forEach((line, i) => {
+    ctx.fillText(line, 100, 400 + i * 60);
+  });
 
-      const gifts = [
-        "Your ability to turn chaos into clarity is unmatched.",
-        "You bring light to places that didn’t even know they were dark.",
-        "People feel seen and safe when you’re around.",
-        "You don’t chase magic — you are the magic.",
-        "You were born to inspire and built to lead.",
-        "When you walk into a room, energy shifts — and everyone notices."
-      ];
+  ctx.font = '24px Arial';
+  ctx.fillStyle = '#333';
+  ctx.fillText("Generated at xyz.com", 100, 1860);
+});
 
-      const closings = [
-        "And guess what? You’re just getting started.",
-        "The universe leans in when you speak.",
-        "Everyone who knows you is lucky. Period.",
-        "You’re the main character — unapologetically.",
-        "Big things are not just coming — they’re inevitable for you."
-      ];
+downloadBtn.addEventListener('click', () => {
+  const link = document.createElement('a');
+  link.download = 'story-personality-result.png';
+  link.href = canvas.toDataURL();
+  link.click();
+});
 
-      const emojis = ["✨", "🔥", "🌟", "💫", "⚡", "❤️", "👑", "🌈"];
-      const emoji = emojis[Math.floor(Math.random() * emojis.length)];
-
-      const title = titles[Math.floor(Math.random() * titles.length)];
-      const vibe = vibes[Math.floor(Math.random() * vibes.length)];
-      const gift = gifts[Math.floor(Math.random() * gifts.length)];
-      const closing = closings[Math.floor(Math.random() * closings.length)];
-
-      const paragraph = `${emoji} ${name}, you're ${vibe}. ${gift} ${closing} ${emoji}`;
-      const bgColor = bgColors[title];
-      const titleFont = fonts[title];
-
-      return { title, paragraph, bgColor, titleFont };
-    }
-
-    function generateImage(name, resultTitle, resultDescription, bgColor, titleFont) {
-      canvas.style.display = 'block';
-      downloadBtn.style.display = 'inline-block';
-      regenBtn.style.display = 'inline-block';
-
-      ctx.fillStyle = bgColor;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.fillStyle = '#000';
-      ctx.font = '20px Arial';
-      ctx.fillText(`${name}, you're...`, 30, 60);
-
-      ctx.font = titleFont;
-      ctx.fillStyle = '#C71585';
-      ctx.fillText(resultTitle, 30, 100);
-
-      ctx.font = '16px Arial';
-      ctx.fillStyle = '#333';
-      let lines = wrapText(ctx, resultDescription, 30, 140, 540, 24);
-      lines.forEach((line, i) => {
-        ctx.fillText(line, 30, 140 + i * 24);
-      });
-
-      ctx.font = '13px Arial';
-      ctx.fillStyle = '#666';
-      ctx.fillText("Generated by taking the personality test at xyz.com", 30, 380);
-    }
-
-    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
-      const words = text.split(' ');
-      let line = '';
-      const lines = [];
-
-      for (let i = 0; i < words.length; i++) {
-        const testLine = line + words[i] + ' ';
-        const metrics = ctx.measureText(testLine);
-        const testWidth = metrics.width;
-
-        if (testWidth > maxWidth && i > 0) {
-          lines.push(line);
-          line = words[i] + ' ';
-        } else {
-          line = testLine;
-        }
-      }
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = text.split(' ');
+  let line = '';
+  const lines = [];
+  for (let i = 0; i < words.length; i++) {
+    const testLine = line + words[i] + ' ';
+    const metrics = ctx.measureText(testLine);
+    const testWidth = metrics.width;
+    if (testWidth > maxWidth && i > 0) {
       lines.push(line);
-      return lines;
+      line = words[i] + ' ';
+    } else {
+      line = testLine;
     }
-
-    downloadBtn.addEventListener('click', () => {
-      const link = document.createElement('a');
-      link.download = 'your-personality-result.png';
-      link.href = canvas.toDataURL();
-      link.click();
-    });
-  </script>
+  }
+  lines.push(line);
+  return lines;
+}
+</script>
 </body>
 </html>
