@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Personality Quiz</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    .question { margin: 20px 0; }
+    #resultCanvas { display: none; margin-top: 20px; border: 1px solid #ccc; }
+    #downloadBtn, #regenBtn { display: none; margin-top: 15px; padding: 10px 20px; font-size: 16px; margin-right: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Discover Your Power Personality</h1>
+  <form id="quizForm">
+    <div>
+      <label>Your Name:</label><br>
+      <input type="text" name="username" required />
+    </div>
+
+    <!-- Questions omitted for brevity: same 8 as before -->
+    <!-- ... (copy all 8 questions from previous version here) ... -->
+
+    <button type="submit">Reveal My Personality</button>
+  </form>
+
+  <canvas id="resultCanvas" width="600" height="400"></canvas>
+  <br>
+  <button id="downloadBtn">Download & Share</button>
+  <button id="regenBtn">Try a Different Version</button>
+
+  <script>
+    const form = document.getElementById('quizForm');
+    const canvas = document.getElementById('resultCanvas');
+    const ctx = canvas.getContext('2d');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const regenBtn = document.getElementById('regenBtn');
+
+    let currentName = '';
+    let currentScore = 0;
+
+    const bgColors = {
+      "The Fearless Flame": "#FFD1DC",
+      "The Magnetic Legend": "#FAD6A5",
+      "The Visionary Mind": "#D0F0C0",
+      "The Gentle Healer": "#BEE3F8",
+      "The Cosmic Creator": "#E0BBE4",
+      "The Vibe Magnet": "#F6E2B3",
+      "The Soul Alchemist": "#D3F4FF",
+      "The Dream Architect": "#FFE6E6",
+      "The Unwritten Legend": "#FFF3B0"
+    };
+
+    const fonts = {
+      "The Fearless Flame": "bold 26px Arial",
+      "The Magnetic Legend": "italic 26px Georgia",
+      "The Visionary Mind": "26px Trebuchet MS",
+      "The Gentle Healer": "26px Verdana",
+      "The Cosmic Creator": "bold 26px Courier New",
+      "The Vibe Magnet": "26px Comic Sans MS",
+      "The Soul Alchemist": "italic 26px Palatino",
+      "The Dream Architect": "bold 26px Helvetica",
+      "The Unwritten Legend": "26px Times New Roman"
+    };
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(form);
+      currentName = formData.get('username');
+      currentScore = 0;
+
+      for (let i = 1; i <= 8; i++) {
+        const answer = formData.get(`q${i}`);
+        if (answer === 'A') currentScore += 2;
+        if (answer === 'B') currentScore += 1;
+        if (answer === 'C') currentScore += 3;
+      }
+
+      const result = generateDynamicResult(currentName, currentScore);
+      generateImage(currentName, result.title, result.paragraph, result.bgColor, result.titleFont);
+    });
+
+    regenBtn.addEventListener('click', () => {
+      const result = generateDynamicResult(currentName, currentScore);
+      generateImage(currentName, result.title, result.paragraph, result.bgColor, result.titleFont);
+    });
+
+    function generateDynamicResult(name, score) {
+      const titles = Object.keys(bgColors);
+      const vibes = [
+        "bold and unstoppable", "charming beyond words", "an energy people can’t ignore",
+        "a symphony of brilliance", "a calm in every storm", "the life of every room",
+        "a spark that starts wildfires", "the gravity that holds others"
+      ];
+
+      const gifts = [
+        "Your ability to turn chaos into clarity is unmatched.",
+        "You bring light to places that didn’t even know they were dark.",
+        "People feel seen and safe when you’re around.",
+        "You don’t chase magic — you are the magic.",
+        "You were born to inspire and built to lead.",
+        "When you walk into a room, energy shifts — and everyone notices."
+      ];
+
+      const closings = [
+        "And guess what? You’re just getting started.",
+        "The universe leans in when you speak.",
+        "Everyone who knows you is lucky. Period.",
+        "You’re the main character — unapologetically.",
+        "Big things are not just coming — they’re inevitable for you."
+      ];
+
+      const emojis = ["✨", "🔥", "🌟", "💫", "⚡", "❤️", "👑", "🌈"];
+      const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+
+      const title = titles[Math.floor(Math.random() * titles.length)];
+      const vibe = vibes[Math.floor(Math.random() * vibes.length)];
+      const gift = gifts[Math.floor(Math.random() * gifts.length)];
+      const closing = closings[Math.floor(Math.random() * closings.length)];
+
+      const paragraph = `${emoji} ${name}, you're ${vibe}. ${gift} ${closing} ${emoji}`;
+      const bgColor = bgColors[title];
+      const titleFont = fonts[title];
+
+      return { title, paragraph, bgColor, titleFont };
+    }
+
+    function generateImage(name, resultTitle, resultDescription, bgColor, titleFont) {
+      canvas.style.display = 'block';
+      downloadBtn.style.display = 'inline-block';
+      regenBtn.style.display = 'inline-block';
+
+      ctx.fillStyle = bgColor;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#000';
+      ctx.font = '20px Arial';
+      ctx.fillText(`${name}, you're...`, 30, 60);
+
+      ctx.font = titleFont;
+      ctx.fillStyle = '#C71585';
+      ctx.fillText(resultTitle, 30, 100);
+
+      ctx.font = '16px Arial';
+      ctx.fillStyle = '#333';
+      let lines = wrapText(ctx, resultDescription, 30, 140, 540, 24);
+      lines.forEach((line, i) => {
+        ctx.fillText(line, 30, 140 + i * 24);
+      });
+
+      ctx.font = '13px Arial';
+      ctx.fillStyle = '#666';
+      ctx.fillText("Generated by taking the personality test at xyz.com", 30, 380);
+    }
+
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = text.split(' ');
+      let line = '';
+      const lines = [];
+
+      for (let i = 0; i < words.length; i++) {
+        const testLine = line + words[i] + ' ';
+        const metrics = ctx.measureText(testLine);
+        const testWidth = metrics.width;
+
+        if (testWidth > maxWidth && i > 0) {
+          lines.push(line);
+          line = words[i] + ' ';
+        } else {
+          line = testLine;
+        }
+      }
+      lines.push(line);
+      return lines;
+    }
+
+    downloadBtn.addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = 'your-personality-result.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  </script>
+</body>
+</html>
