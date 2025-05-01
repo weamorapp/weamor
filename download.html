@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Redirecting...</title>
+  <script>
+    window.onload = function () {
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+      // Replace with your actual store URLs
+      const androidUrl = "https://play.google.com/store/apps/details?id=app.weamor";
+      const iosUrl = "https://apps.apple.com/app/we-amor/id6469098495";
+
+      if (/android/i.test(userAgent)) {
+        window.location.href = androidUrl;
+      } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        window.location.href = iosUrl;
+      } else {
+        // Fallback if not Android or iOS
+        document.getElementById('fallback').style.display = 'block';
+      }
+    };
+  </script>
+</head>
+<body>
+  <p id="fallback" style="display: none; text-align:center; font-family:sans-serif;">
+    You can download our app from the <a href="https://play.google.com/store/apps/details?id=com.example.weamor" target="_blank">Google Play Store</a> or <a href="https://apps.apple.com/app/id1234567890" target="_blank">Apple App Store</a>.
+  </p>
+</body>
+</html>
