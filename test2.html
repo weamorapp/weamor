@@ -60,8 +60,8 @@
   </div>
 
   <div class="page" id="page3">
-    <p style="margin-top: 20px; font-size: 16px; color: #555;">After downloading the image, open Instagram and upload it to your story manually.</p>
-    <button onclick="copyCaption()" style="margin-top: 10px; background-color: #4267B2; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 16px;">📋 Copy Caption for Instagram</button>
+   <!-- <p style="margin-top: 20px; font-size: 16px; color: #555;">After downloading the image, open Instagram and upload it to your story manually.</p>
+    <button onclick="copyCaption()" style="margin-top: 10px; background-color: #4267B2; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 16px;">📋 Copy Caption for Instagram</button> -->
     
     <canvas id="resultCanvas" width="1080" height="1920"></canvas>
     <a id="downloadLink">📥 Download or Share</a>
@@ -232,12 +232,12 @@ function startGeneration() {
 window.onload = function () {
   document.getElementById('generateBtn').onclick = startGeneration;
 };
-function copyCaption() {
+ function copyCaption() {
   const caption = "I just discovered my personality report! 🔮 Made with ❤️ at xyz.com";
   navigator.clipboard.writeText(caption).then(() => {
     alert("Caption copied! Paste it in your Instagram story.");
   });
-}
+} 
 </script>
 </body>
 </html>
