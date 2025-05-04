@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Personality Report Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; margin: 0; background: #f8f9fa; text-align: center; }
+    .page { display: none; padding: 40px 20px; }
+    .active { display: block; }
+    .container {
+      background: white; padding: 30px; border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1); max-width: 480px; margin: 60px auto;
+    }
+    input, button {
+      padding: 12px; margin: 10px 0; border-radius: 8px;
+      border: 1px solid #ccc; width: 90%; font-size: 16px;
+    }
+    button {
+      background-color: #5cb85c; color: white; border: none; cursor: pointer;
+    }
+    button:hover { background-color: #4cae4c; }
+    #loader {
+      border: 8px solid #f3f3f3; border-top: 8px solid #3498db; border-radius: 50%;
+      width: 80px; height: 80px; animation: spin 1s linear infinite; margin: 40px auto;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    canvas {
+      display: none; margin-top: 30px; border-radius: 10px;
+      max-width: 100%; height: auto;
+    }
+    #downloadLink {
+      display: none; margin-top: 20px; font-weight: bold;
+      color: #007bff; text-decoration: none; font-size: 18px;
+      word-break: break-word;
+    }
+    @media screen and (max-width: 600px) {
+      canvas { width: 100% !important; height: auto !important; }
+      .container { margin: 20px auto; padding: 20px; }
+    }
+</style>
+</head>
+<body>
+  <div class="page active" id="page1">
+    <div class="container">
+      <h2>🔮 Discover Your Personality</h2>
+      <p>Enter your name and date of birth (dd/mm/yy)</p>
+      <input type="text" id="name" placeholder="Your Name" />
+      <input type="text" id="dob" placeholder="DD/MM/YY" />
+      <button id="generateBtn">Generate Personality</button>
+    </div>
+  </div>
+
+  <div class="page" id="page2">
+    <div class="container">
+      <div id="loader"></div>
+      <h3>Generating your personality report...</h3>
+    </div>
+  </div>
+
+  <div class="page" id="page3">
+  <!--  <p style="margin-top: 20px; font-size: 16px; color: #555;">After downloading the image, open Instagram and upload it to your story manually.</p>
+    <button onclick="copyCaption()" style="margin-top: 10px; background-color: #4267B2; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 16px;">📋 Copy Caption for Instagram</button>-->
+    
+    <canvas id="resultCanvas" width="1080" height="1920"></canvas>
+    <a id="downloadLink">📥 Download or Share</a>
+  </div>
+
+  <script>
+    const numerologyData = {
+      1: { traits: ["Loyal and dependable", "Motivating and inspiring", "Clear and honest communicator"], misunderstood: ["Confidence = arrogance", "Independence = detachment", "Directness = insensitivity"] },
+      2: { traits: ["Exceptionally empathetic", "Peace-loving and diplomatic", "Supportive and nurturing"], misunderstood: ["Kindness = weakness", "Emotional depth = moodiness", "Avoiding conflict = indecisiveness"] },
+      3: { traits: ["Charming and joyful", "Great communicator", "Supportive and optimistic"], misunderstood: ["Humor = insincerity", "Confidence = show-off", "Independence = unavailability"] },
+      4: { traits: ["Loyal and dependable", "Practical and grounded", "Hardworking and sincere"], misunderstood: ["Seriousness = boring", "Honesty = rudeness", "Reserved = unaffectionate"] },
+      5: { traits: ["Fun-loving and spontaneous", "Excellent communicator", "Adaptable and open-minded"], misunderstood: ["Freedom = commitment issue", "Sociability = flirtatious", "Variety-seeking = unreliable"] },
+      6: { traits: ["Loving and nurturing", "Romantic and expressive", "Responsible and loyal"], misunderstood: ["Caring = clingy", "Helping = interfering", "Emotional depth = drama"] },
+      7: { traits: ["Deep and intuitive", "Loyal and spiritually connected", "Wise and reflective"], misunderstood: ["Quietness = disinterest", "Solitude = distance", "Depth = aloofness"] },
+      8: { traits: ["Loyal and committed", "Strong and dependable", "Ambitious and motivating"], misunderstood: ["Seriousness = unavailability", "Work focus = neglect", "Strong personality = control"] },
+      9: { traits: ["Compassionate and selfless", "Emotionally intense", "Protective and courageous"], misunderstood: ["Intensity = drama", "Selflessness = weakness", "Justice drive = rigidity"] }
+    };
+
+    const zodiacData = {
+      Aries: ["Fierce and bold love", "Protective and passionate", "Spontaneous and exciting"],
+      Taurus: ["Deeply loyal", "Stable and patient", "Expresses love with care"],
+      Gemini: ["Witty and social", "Mentally stimulating", "Open-minded and adaptable"],
+      Cancer: ["Nurturing and caring", "Forms strong bonds", "Loyal and emotionally rich"],
+      Leo: ["Loves wholeheartedly", "Generous and warm", "Protective of loved ones"],
+      Virgo: ["Helpful and reliable", "Emotionally supportive", "Thoughtful and loyal"],
+      Libra: ["Peacemakers and romantic", "Great listeners", "Charming and fair"],
+      Scorpio: ["Intense and loyal", "Emotionally deep", "Honest and authentic"],
+      Sagittarius: ["Adventurous and fun", "Honest and free", "Optimistic and open"],
+      Capricorn: ["Loyal and supportive", "Stable and consistent", "Builds strong foundations"],
+      Aquarius: ["Values emotional freedom", "Original and visionary", "Deep and intellectual"],
+      Pisces: ["Empathetic and dreamy", "Unconditionally loving", "Creative and magical"]
+    };
+
+    const zodiacMisunderstood = {
+      Aries: ["Confidence = arrogance", "Directness = rude", "Independence = disinterest"],
+      Taurus: ["Routine = boring", "Calm = lazy", "Stubborn = unreasonable"],
+      Gemini: ["Dual = fake", "Variety = disloyal", "Talkative = superficial"],
+      Cancer: ["Depth = moody", "Security = clingy", "Introvert = cold"],
+      Leo: ["Confident = show-off", "Leadership = controlling", "Expressive = dramatic"],
+      Virgo: ["Perfect = critical", "Reserved = cold", "Helpful = controlling"],
+      Libra: ["Peaceful = indecisive", "Charming = flirty", "Balanced = non-committal"],
+      Scorpio: ["Intense = obsessive", "Private = secretive", "Deep = dramatic"],
+      Sagittarius: ["Free = commitment-phobic", "Blunt = rude", "Fun = irresponsible"],
+      Capricorn: ["Serious = unromantic", "Driven = materialistic", "Quiet = arrogant"],
+      Aquarius: ["Independent = detached", "Different = rebellious", "Logical = unfeeling"],
+      Pisces: ["Sensitive = weak", "Dreamy = unrealistic", "Chill = directionless"]
+    };
+  function getNumerologyNumber(day) {
+  let sum = day;
+  while (sum > 9) {
+    sum = sum.toString().split('').reduce((a, b) => a + parseInt(b), 0);
+  }
+  return sum;
+}
+
+function getZodiacSign(day, month) {
+  if ((month === 1 && day <= 19) || (month === 12 && day >= 22)) return "Capricorn";
+  else if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return "Aquarius";
+  else if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) return "Pisces";
+  else if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return "Aries";
+  else if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return "Taurus";
+  else if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return "Gemini";
+  else if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return "Cancer";
+  else if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return "Leo";
+  else if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return "Virgo";
+  else if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return "Libra";
+  else if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) return "Scorpio";
+  else return "Sagittarius";
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = text.split(' ');
+  let line = '';
+  for (let n = 0; n < words.length; n++) {
+    const testLine = line + words[n] + ' ';
+    const testWidth = ctx.measureText(testLine).width;
+    if (testWidth > maxWidth && n > 0) {
+      ctx.fillText(line, x, y);
+      line = words[n] + ' ';
+      y += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+  ctx.fillText(line, x, y);
+}
+
+function startGeneration() {
+  const name = document.getElementById('name').value.trim();
+  const dob = document.getElementById('dob').value.trim();
+  if (!name || !dob || !dob.includes('/')) return alert("Please fill all fields correctly!");
+
+  document.getElementById("page1").classList.remove("active");
+  document.getElementById("page2").classList.add("active");
+
+  setTimeout(() => {
+    document.getElementById("page2").classList.remove("active");
+    document.getElementById("page3").classList.add("active");
+
+    const canvas = document.getElementById("resultCanvas");
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const [day, month] = dob.split("/").map(d => parseInt(d));
+    const number = getNumerologyNumber(day);
+    const zodiac = getZodiacSign(day, month);
+
+    const numerology = numerologyData[number] || { traits: [], misunderstood: [] };
+    const zodiacT = zodiacData[zodiac] || [];
+    const zodiacM = zodiacMisunderstood[zodiac] || [];
+
+    const traits = [...new Set([...numerology.traits, ...zodiacT])];
+    const misunderstandings = [...new Set([...numerology.misunderstood, ...zodiacM])];
+
+    ctx.fillStyle = "#ffeef4";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#333";
+    ctx.textAlign = "center";
+    ctx.font = "bold 70px Poppins";
+    ctx.fillText("🔮 Personality Report", 540, 250);
+
+    ctx.font = "bold 48px Poppins";
+    ctx.fillText(`Name: ${name}`, 540, 330);
+    ctx.fillText(`Zodiac: ${zodiac}`, 540, 400);
+    ctx.fillText(`Number: ${number}`, 540, 470);
+
+    let y = 550;
+    ctx.font = "italic 32px Poppins";
+    ctx.fillStyle = "#777";
+    ctx.fillText("Generated by xyz.com", canvas.width / 2, y);
+
+    y += 70;
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#333";
+    ctx.font = "bold 48px Poppins";
+    ctx.fillText("🧠 Top Traits:", canvas.width / 2, y);
+
+    ctx.textAlign = "left";
+    ctx.font = "36px Poppins";
+    y += 60;
+    traits.forEach(t => {
+      wrapText(ctx, "✔ " + t, 100, y, 880, 46);
+      y += 60;
+    });
+
+    y += 40;
+    ctx.font = "bold 48px Poppins";
+    ctx.textAlign = "center";
+    ctx.fillText("⚠️ Misunderstandings:", canvas.width / 2, y);
+
+    ctx.textAlign = "left";
+    ctx.font = "36px Poppins";
+    y += 60;
+    misunderstandings.forEach(m => {
+      wrapText(ctx, "✖ " + m, 100, y, 880, 46);
+      y += 60;
+    });
+
+    canvas.style.display = "block";
+    const downloadLink = document.getElementById("downloadLink");
+    const imageData = canvas.toDataURL();
+    downloadLink.href = imageData;
+    downloadLink.download = `${name}_personality_report.png`;
+    downloadLink.style.display = "inline-block";
+  }, 2000);
+}
+
+window.onload = function () {
+  document.getElementById('generateBtn').onclick = startGeneration;
+};
+function copyCaption() {
+  const caption = "I just discovered my personality report! 🔮 Made with ❤️ at xyz.com";
+  navigator.clipboard.writeText(caption).then(() => {
+    alert("Caption copied! Paste it in your Instagram story.");
+  });
+}
+</script>
+</body>
+</html>
